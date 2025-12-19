@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TaggingGts Projects</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --accent: #38bdf8;
+  --border: rgba(56,189,248,.25);
+  --card: rgba(6,10,30,.85);
+}
+
+/* RESET */
+* { box-sizing: border-box; }
+
+/* BACKGROUND — SCHOOL ROOFTOP */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #e5e7eb;
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(2,6,23,.7), rgba(2,6,23,.9)),
+    url("https://images.unsplash.com/photo-1600359737303-8b47e6c5d52d?auto=format&fit=crop&w=1920&q=80");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* SHOOTING STARS */
+#stars {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* RAIN */
+#rain {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* DISCORD BUTTON */
+.discord-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #020617, #020024);
+  border: 1px solid rgba(88,101,242,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 35px rgba(88,101,242,.35);
+  transition: all .45s cubic-bezier(.16,1,.3,1);
+}
+
+.discord-btn img {
+  width: 42px;
+  height: 42px;
+}
+
+.discord-btn:hover {
+  transform: translateY(-5px) scale(1.06);
+  box-shadow: 0 0 55px rgba(88,101,242,.6);
+}
+
+/* CONTENT */
+header, main, footer {
+  position: relative;
+  z-index: 5;
+}
+
+header {
+  text-align: center;
+  padding: 50px 20px 20px;
+}
+
+header h1 {
+  font-size: 2.6rem;
+  margin: 0;
+}
+
+/* MAIN */
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+/* ANIMATIONS */
+.fade {
+  animation: fade .9s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* YEAR BUTTONS */
+.years {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.year-btn {
+  padding: 18px 32px;
+  font-size: 1.2rem;
+  color: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, #020617, #020024);
+  cursor: pointer;
+  transition: all .45s cubic-bezier(.16,1,.3,1);
+}
+
+.year-btn:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 0 30px rgba(56,189,248,.35);
+}
+
+/* DOWNLOAD CARDS */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  margin: 18px 0;
+  backdrop-filter: blur(12px);
+  transition: all .45s cubic-bezier(.16,1,.3,1);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 35px rgba(56,189,248,.3);
+}
+
+.card a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* BACK BUTTON */
+.back {
+  margin-bottom: 30px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #9ca3af;
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<canvas id="rain"></canvas>
+
+<a href="https://discord.gg/W2PkPCB8bz" target="_blank" class="discord-btn">
+  <img src="discord.png" alt="Discord">
+</a>
+
+<header class="fade">
+  <h1>TaggingGts Projects</h1>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  © <span id="year"></span> TaggingGts Projects
+</footer>
+
+<audio id="rainSound" loop autoplay>
+  <source src="rain.m4a" type="audio/mp4">
+</audio>
+
+<script>
+const rainSound = document.getElementById("rainSound");
+rainSound.volume = 0.25;
+
+let audioStarted = false;
+
+function startRainAudio() {
+  if (!audioStarted) {
+    rainSound.play().catch(() => {});
+    audioStarted = true;
+    document.removeEventListener("click", startRainAudio);
+  }
+}
+
+document.addEventListener("click", startRainAudio);
+</script>
+
+
+<script>
+document.getElementById("rainSound").volume = 0.25;
+
+/* DOWNLOAD DATA */
+const downloadsData = [
+  {
+    year: 2021,
+    items: [
+      { name: "Fall 2021", link: "#" },
+      { name: "Forest Music 2021", link: "#" },
+      { name: "Halloween 2021", link: "#" },
+      { name: "Christmas 2021", link: "#" }
+    ]
+  },
+  {
+    year: 2022,
+    items: [
+      { name: "Fall 2022", link: "#" },
+      { name: "Rainy 2022", link: "#" },
+      { name: "Spring 2022", link: "#" },
+      { name: "Music 2022", link: "#" },
+      { name: "Summer 2022", link: "#" },
+      { name: "Halloween 2022", link: "#" },
+      { name: "Christmas 2022", link: "#" }
+    ]
+  },
+  {
+    year: 2023,
+    items: [
+      { name: "Spring Cleaning 2023", link: "https://drive.google.com/file/d/1nGpHzs6qS_fecWb0rRBQU2ppmn2rWH-n/view" },
+      { name: "Forest lava 2023", link: "#" },
+      { name: "Back to School 2023", link: "#" },
+      { name: "Christmas 2023", link: "#" }
+    ]
+  },
+  {
+    year: 2024,
+    items: [
+      { name: "Science 2024", link: "#" },
+      { name: "I Lava You 2024", link: "#" },
+      { name: "Valentines Flashback", link: "#" },
+      { name: "Nowruz 2024", link: "#" }
+    ]
+  }
+];
+
+const app = document.getElementById("app");
+let selectedYear = null;
+
+function render() {
+  app.innerHTML = "";
+  if (!selectedYear) {
+    app.innerHTML = `
+      <div class="fade">
+        <h2 style="text-align:center">Select a Year</h2>
+        <div class="years">
+          ${downloadsData.map(d => `<button class="year-btn" onclick="selectYear(${d.year})">${d.year}</button>`).join("")}
+        </div>
+      </div>`;
+  } else {
+    const data = downloadsData.find(d => d.year === selectedYear);
+    app.innerHTML = `
+      <div class="fade">
+        <button class="back" onclick="goBack()">← Back</button>
+        <h2>${selectedYear} Downloads</h2>
+        ${data.items.map(i => `
+          <div class="card">
+            <strong>${i.name}</strong><br>
+            <a href="${i.link}" target="_blank">Download</a>
+          </div>`).join("")}
+      </div>`;
+  }
+}
+function selectYear(y){ selectedYear=y; render(); }
+function goBack(){ selectedYear=null; render(); }
+
+document.getElementById("year").textContent = new Date().getFullYear();
+render();
+
+/* SHOOTING STARS */
+const s = document.getElementById("stars"), sc = s.getContext("2d");
+function rs(){ s.width=innerWidth; s.height=innerHeight }
+addEventListener("resize",rs); rs();
+let stars=[];
+setInterval(()=>stars.push({x:Math.random()*s.width,y:-20,v:Math.random()*8+6,l:0}),450);
+function animS(){
+  sc.clearRect(0,0,s.width,s.height);
+  stars.forEach((a,i)=>{
+    sc.strokeStyle="rgba(255,255,255,.8)";
+    sc.beginPath();
+    sc.moveTo(a.x,a.y);
+    sc.lineTo(a.x-a.v*3,a.y-a.v*3);
+    sc.stroke();
+    a.x+=a.v; a.y+=a.v; a.l++;
+    if(a.l>60) stars.splice(i,1);
+  });
+  requestAnimationFrame(animS);
+}
+animS();
+
+/* RAIN */
+const r = document.getElementById("rain"), rc = r.getContext("2d");
+function rr(){ r.width=innerWidth; r.height=innerHeight }
+addEventListener("resize",rr); rr();
+let drops=[...Array(450)].map(()=>({x:Math.random()*r.width,y:Math.random()*r.height,l:Math.random()*20+10,s:Math.random()*4+4}));
+function rain(){
+  rc.clearRect(0,0,r.width,r.height);
+  rc.strokeStyle="rgba(180,200,255,.35)";
+  drops.forEach(d=>{
+    rc.beginPath();
+    rc.moveTo(d.x,d.y);
+    rc.lineTo(d.x,d.y+d.l);
+    rc.stroke();
+    d.y+=d.s;
+    if(d.y>r.height){ d.y=-20; d.x=Math.random()*r.width; }
+  });
+  requestAnimationFrame(rain);
+}
+rain();
+</script>
+
+</body>
+</html>
