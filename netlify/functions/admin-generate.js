@@ -1,32 +1,63 @@
 const { createClient } = require("@supabase/supabase-js");
-const crypto = require("crypto");
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-// CHANGE THIS
-const ADMIN_SECRET = "CHANGE_THIS_SECRET";
 
 exports.handler = async (event) => {
-  const { secret, days } = event.queryStringParameters || {};
+  const params = event.queryStringParameters || {};
+  const secretFromUrl = params.secret;
 
-  if (secret !== ADMIN_SECRET || !days) {
-    return { statusCode: 403, body: "Forbidden" };
+  // 🔎 DEBUG: show what Netlify actually sees
+  if (params.debug === "1") {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        urlSecret: secretFromUrl || null,
+        envSecret: process.env.ADMIN_SECRET || null,
+        supabaseUrlExists: !!process.env.SUPABASE_URL,
+        serviceRoleExists: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+      }, null, 2)
+    };
   }
 
-  const key =
-    "TGTS-" + crypto.randomBytes(4).toString("hex").toUpperCase();
+  // 🔐 Admin protection
+  if (!secretFromUrl || secretFromUrl !== process.env.ADMIN_SECRET) {
+    return {
+      statusCode: 403,
+      body: "Forbidden"
+    };
+  }
 
-  await supabase.from("keys").insert({
+  // Safety checks
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return {
+      statusCode: 500,
+      body: "Missing Supabase environment variables"
+    };
+  }
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  const days = parseInt(params.days || "7", 10);
+  const key = "TGTS-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+  const expiresAt = new Date(Date.now() + days * 86400000).toISOString();
+
+  const { error } = await supabase.from("keys").insert({
     key,
-    duration_days: parseInt(days),
-    redeemed: false
+    duration_days: days,
+    redeemed: false,
+    expires_at: expiresAt
   });
+
+  if (error) {
+    return {
+      statusCode: 500,
+      body: error.message
+    };
+  }
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ key, days })
+    body: JSON.stringify({ key, days }, null, 2)
   };
 };
